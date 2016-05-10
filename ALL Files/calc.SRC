@@ -1,0 +1,453 @@
+; calc.SRC generated from: calc.c
+; COMPILER INVOKED BY:
+;        C:\Keil_v5\C51\BIN\C51.EXE calc.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+$NOMOD51
+
+NAME	CALC
+
+P0	DATA	080H
+P1	DATA	090H
+P2	DATA	0A0H
+P3	DATA	0B0H
+T0	BIT	0B0H.4
+AC	BIT	0D0H.6
+T1	BIT	0B0H.5
+T2	BIT	090H.0
+EA	BIT	0A8H.7
+IE	DATA	0A8H
+EXF2	BIT	0C8H.6
+RD	BIT	0B0H.7
+ES	BIT	0A8H.4
+IP	DATA	0B8H
+RI	BIT	098H.0
+INT0	BIT	0B0H.2
+CY	BIT	0D0H.7
+TI	BIT	098H.1
+INT1	BIT	0B0H.3
+RCAP2H	DATA	0CBH
+PS	BIT	0B8H.4
+SP	DATA	081H
+T2EX	BIT	090H.1
+OV	BIT	0D0H.2
+RCAP2L	DATA	0CAH
+C_T2	BIT	0C8H.1
+WR	BIT	0B0H.6
+RCLK	BIT	0C8H.5
+TCLK	BIT	0C8H.4
+SBUF	DATA	099H
+PCON	DATA	087H
+SCON	DATA	098H
+TMOD	DATA	089H
+TCON	DATA	088H
+IE0	BIT	088H.1
+IE1	BIT	088H.3
+B	DATA	0F0H
+CP_RL2	BIT	0C8H.0
+ACC	DATA	0E0H
+ET0	BIT	0A8H.1
+ET1	BIT	0A8H.3
+TF0	BIT	088H.5
+ET2	BIT	0A8H.5
+TF1	BIT	088H.7
+TF2	BIT	0C8H.7
+RB8	BIT	098H.2
+TH0	DATA	08CH
+EX0	BIT	0A8H.0
+IT0	BIT	088H.0
+TH1	DATA	08DH
+TB8	BIT	098H.3
+EX1	BIT	0A8H.2
+IT1	BIT	088H.2
+TH2	DATA	0CDH
+P	BIT	0D0H.0
+SM0	BIT	098H.7
+TL0	DATA	08AH
+SM1	BIT	098H.6
+TL1	DATA	08BH
+SM2	BIT	098H.5
+TL2	DATA	0CCH
+PT0	BIT	0B8H.1
+PT1	BIT	0B8H.3
+RS0	BIT	0D0H.3
+PT2	BIT	0B8H.5
+TR0	BIT	088H.4
+RS1	BIT	0D0H.4
+TR1	BIT	088H.6
+TR2	BIT	0C8H.2
+PX0	BIT	0B8H.0
+PX1	BIT	0B8H.2
+DPH	DATA	083H
+DPL	DATA	082H
+EXEN2	BIT	0C8H.3
+REN	BIT	098H.4
+T2CON	DATA	0C8H
+RXD	BIT	0B0H.0
+TXD	BIT	0B0H.1
+F0	BIT	0D0H.5
+PSW	DATA	0D0H
+?PR?_addFun?CALC     SEGMENT CODE 
+?XD?_addFun?CALC     SEGMENT XDATA OVERLAYABLE 
+?CO?CALC             SEGMENT CODE 
+	EXTRN	CODE (_UART_SendString)
+	EXTRN	CODE (?C?LLDOPTR)
+	EXTRN	CODE (?C?LLDPTR)
+	PUBLIC	?_addFun?BYTE
+	PUBLIC	_addFun
+
+	RSEG  ?XD?_addFun?CALC
+?_addFun?BYTE:
+      ptr_x?040:   DS   3
+	ORG  3
+      ptr_y?041:   DS   3
+	ORG  6
+          x?042:   DS   1
+	ORG  7
+          y?043:   DS   1
+	ORG  8
+          z?044:   DS   1
+	ORG  9
+         v1?045:   DS   8
+	ORG  17
+         v2?046:   DS   8
+	ORG  25
+       Data?047:   DS   16
+	ORG  41
+        ptr?048:   DS   3
+
+	RSEG  ?CO?CALC
+?SC_0:
+	DB  'C' ,'a' ,'l' ,'c' ,' ' ,'I' ,'a' ,'m' ,' ' ,'c' 
+	DB  'a' ,'l' ,'l' ,'e' ,'d' ,000H
+
+?SC_16:
+	DB  'H' ,'E' ,'L' ,'L' ,'O' ,' ' ,'E' ,'V' ,'E' ,'R' 
+	DB  'y' ,' ' ,'B' ,'O' ,'d' ,'y' ,000H
+
+?SC_33:
+	DB  'E' ,'V' ,'E' ,'R' ,'y' ,' ' ,'B' ,'O' ,'d' ,'y' 
+	DB  000H
+
+; //C51 calc.C SRC
+; 
+; //C51 calc.C SRC(SML.ASM)
+; 
+; //#pragma src
+; //#pragma SRC
+; #pragma SRC
+; #include "calc.h"
+; #include "uart.h"
+; 
+; /*big128 big128_mul(big64 x, big64 y)
+; {
+; /* x * y = (z2 << 64) + (z1 << 32) + z0
+; 	 * where z2 = x1 * y1
+; 	 *       z1 = x0 * y1 + x1 * y0
+; 	 *       z0 = x0 * y0
+; 	 */
+; /*	big128 p ;
+; 	
+; 	uint64 x0 =	x.v[0], x1 = x.v[1], y0 = y.v[0], y1 = y.v[1];
+; 	uint64 z0 = x0 * y0;
+; 	uint64 z1a = x1 * y0;
+; 	uint64 z1b = x0 * y1;
+; 	uint64 z2 = x1 * y1;
+;  
+; 	uint32 z0l = z0 & UINT32_MAX;
+; 	uint32 z0h = z0 >> 32u;
+; 	
+; 	uint64 z1al = z1a & UINT32_MAX;
+; 	uint64 z1bl = z1b & UINT32_MAX;
+; 	uint64 z1l = z1al + z1bl + z0h;
+; 	
+; 	uint64 z1h = (z1a >> 32u) + (z1b >> 32u) + (z1l >> 32u);
+; 	z2 += z1h;
+;  
+; 	 p = {{ z0l, z1l & UINT32_MAX, z2 & UINT32_MAX, z2 >> 32u }};
+; 	return p;
+; }*/
+; /*big128_t MULT1(big64_t x , big64_t y)
+; {
+; 	uint8 i ,j ;
+; 	big128_t p1 ;
+; 	uint32 arr[16];
+; 	uint32 arr2[6] ;
+; uint16 * op,ptr2 ;
+; uint16 * ptr  ;
+; uint16 * ptr1 ;
+; ptr = (uint16 *)&(x.v) ;
+; ptr1 =(uint16 *)& (y.v) ;
+; op = (uint16 *)&(p1.v) ;
+; //ptr2 = (uint16 *)&(arr[0]) ;
+; for(j=0;j<4;j++){
+; for(i=0;i<4;i++)
+; 	{
+; arr[i+(j*4)]=x.v[j] * y.v[i] ;
+; }
+;  }
+; 	/*
+; uint32 z0l = z0 & UINT32_MAX;
+; 	uint32 z0h = z0 >> 32u;
+; */
+; //for(i=0;i<8;i++)
+; //	{
+; //	op[i]=(uint16)arr[0] ;
+; 	
+; 	
+; 	//
+; 		
+; 			/*p1.v[0]=x.v[0]*y.v[0] ;
+;       p1.v[1]=x.v[0]*x.v[0] + x.v[1]*y.v[0]+x.v[0]*y.v[1]+0 ;
+; 			p1.v[2]=x.v[1]*y.v[0]+x.v[0]*y.v[1]+x.v[1]*y.v[1] ;
+; 			p1.v[3]=x.v[1]*y.v[1] ; */
+; 	//op[0]
+;  
+;  /*p1.v[0]= arr[0] ;
+;  //UART_Tx(p1.v[0]) ;
+; 	arr2[0]=(arr[1]+arr[4]+(arr[0]<<16));
+; p1.v[1]=(uint16)arr2[0] ;
+;   //UART_Tx(p1.v[1]) ;
+; 
+; 	arr2[1]=(arr[2]+arr[5]+arr[8]+(arr2[0]>>16)) ;
+; 	op[2]=(uint16)arr2[1] ;
+; 	arr2[2]=(arr[3]+arr[6]+arr[9]+arr[12]+(arr2[1]>>16)) ;
+; 	op[3]=(uint16)arr2[2] ;
+; 	arr2[3]=(arr[7]+arr[10]+arr[13]+(arr2[2]>>16)) ;
+; 	op[4]=(uint16)arr2[3] ;
+; arr2[4]=(arr[11]+arr[14]+(arr2[3]>>16)) ;
+; 	op[5]=(uint16)arr2[4] ;
+; arr2[5]=(arr[15]+(arr2[4]>>16)) ;
+; 	op[6]=(uint16)arr2[5] ;
+; 	op[7]=(uint16)(arr2[5]>>16) ;  /*last carry */
+; 	
+; 	
+; 	
+; 	/*************************/
+; 	/*op[0]=/*(uint16)arr[0]* ;
+; /*	arr2[0]=(arr[1]+arr[4]+(arr[0]>>16));
+; 	op[1]=(uint16)arr2[0] ;
+; 	arr2[1]=(arr[2]+arr[5]+arr[8]+(arr2[0]>>16)) ;
+; 	op[2]=(uint16)arr2[1] ;
+; 	arr2[2]=(arr[3]+arr[6]+arr[9]+arr[12]+(arr2[1]>>16)) ;
+; 	op[3]=(uint16)arr2[2] ;
+; 	arr2[3]=(arr[7]+arr[10]+arr[13]+(arr2[2]>>16)) ;
+; 	op[4]=(uint16)arr2[3] ;
+; arr2[4]=(arr[11]+arr[14]+(arr2[3]>>16)) ;
+; 	op[5]=(uint16)arr2[4] ;
+; arr2[5]=(arr[15]+(arr2[4]>>16)) ;
+; 	op[6]=(uint16)arr2[5] ;
+; 	op[7]=(uint16)(arr2[5]>>16) ;  /*last carry */
+; //return p1;
+; //}
+; big128_t addFun(big64_t * ptr_x , big64_t * ptr_y )
+
+	RSEG  ?PR?_addFun?CALC
+_addFun:
+	USING	0
+			; SOURCE LINE # 112
+	MOV  	DPTR,#ptr_x?040
+	MOV  	A,R3
+	MOVX 	@DPTR,A
+	INC  	DPTR
+	MOV  	A,R2
+	MOVX 	@DPTR,A
+	INC  	DPTR
+	MOV  	A,R1
+	MOVX 	@DPTR,A
+; {
+			; SOURCE LINE # 113
+; 	uint8 x=1 ; 
+			; SOURCE LINE # 114
+	MOV  	DPTR,#x?042
+	MOV  	A,#01H
+	MOVX 	@DPTR,A
+; 	uint8 y =1;
+			; SOURCE LINE # 115
+	INC  	DPTR
+	MOVX 	@DPTR,A
+; 	uint8 z =2;
+			; SOURCE LINE # 116
+	INC  	DPTR
+	INC  	A
+	MOVX 	@DPTR,A
+; 	uint8 v1[8];
+; 	uint8 v2[8] ;
+; 	big128_t Data;
+; 	uint8 * ptr ;
+; 	ptr=(uint8 * ) & Data ;
+			; SOURCE LINE # 121
+	MOV  	DPTR,#ptr?048
+	DEC  	A
+	MOVX 	@DPTR,A
+	INC  	DPTR
+	MOV  	A,#HIGH (Data?047)
+	MOVX 	@DPTR,A
+	INC  	DPTR
+	MOV  	A,#LOW (Data?047)
+	MOVX 	@DPTR,A
+; 	UART_SendString("Calc Iam called") ;
+			; SOURCE LINE # 122
+	MOV  	R3,#0FFH
+	MOV  	R2,#HIGH (?SC_0)
+	MOV  	R1,#LOW (?SC_0)
+	LCALL	_UART_SendString
+; v1[0]=(uint8)ptr_x->v[1]>>24;
+			; SOURCE LINE # 123
+	MOV  	DPTR,#ptr_x?040
+	MOVX 	A,@DPTR
+	MOV  	R3,A
+	INC  	DPTR
+	MOVX 	A,@DPTR
+	MOV  	R2,A
+	INC  	DPTR
+	MOVX 	A,@DPTR
+	MOV  	R1,A
+	MOV  	DPTR,#04H
+	LCALL	?C?LLDOPTR
+	MOV  	DPTR,#v1?045
+	CLR  	A
+	MOVX 	@DPTR,A
+; v1[1]=(uint8)ptr_x->v[1]>>16 ;
+			; SOURCE LINE # 124
+	INC  	DPTR
+	MOVX 	@DPTR,A
+; v1[2]=(uint8) ptr_x->v[1]>>8;
+			; SOURCE LINE # 125
+	MOV  	DPTR,#04H
+	LCALL	?C?LLDOPTR
+	MOV  	DPTR,#v1?045+02H
+	CLR  	A
+	MOVX 	@DPTR,A
+; v1[3]=(uint8)ptr_x->v[1];     /*least significnt byte */
+			; SOURCE LINE # 126
+	INC  	DPTR
+	MOV  	A,R7
+	MOVX 	@DPTR,A
+; 	v1[4]=(uint8)ptr_x->v[0]>>24;
+			; SOURCE LINE # 127
+	LCALL	?C?LLDPTR
+	MOV  	DPTR,#v1?045+04H
+	CLR  	A
+	MOVX 	@DPTR,A
+; v1[5]=(uint8)ptr_x->v[0]>>16 ;
+			; SOURCE LINE # 128
+	INC  	DPTR
+	MOVX 	@DPTR,A
+; v1[6]=(uint8) ptr_x->v[0]>>8;
+			; SOURCE LINE # 129
+	LCALL	?C?LLDPTR
+	MOV  	DPTR,#v1?045+06H
+	CLR  	A
+	MOVX 	@DPTR,A
+; v1[7]=(uint8) ptr_x->v[0];     /*least significnt byte */
+			; SOURCE LINE # 130
+	INC  	DPTR
+	MOV  	A,R7
+	MOVX 	@DPTR,A
+; 	/**************** Second Variable ********/
+; 	v2[0]=(uint8)ptr_y->v[1]>>24;
+			; SOURCE LINE # 132
+	MOV  	DPTR,#ptr_y?041
+	MOVX 	A,@DPTR
+	MOV  	R3,A
+	INC  	DPTR
+	MOVX 	A,@DPTR
+	MOV  	R2,A
+	INC  	DPTR
+	MOVX 	A,@DPTR
+	MOV  	R1,A
+	MOV  	DPTR,#04H
+	LCALL	?C?LLDOPTR
+	MOV  	DPTR,#v2?046
+	CLR  	A
+	MOVX 	@DPTR,A
+; v2[1]=(uint8)ptr_y->v[1]>>16 ;
+			; SOURCE LINE # 133
+	INC  	DPTR
+	MOVX 	@DPTR,A
+; v2[2]=(uint8) ptr_y->v[1]>>8;
+			; SOURCE LINE # 134
+	MOV  	DPTR,#04H
+	LCALL	?C?LLDOPTR
+	MOV  	DPTR,#v2?046+02H
+	CLR  	A
+	MOVX 	@DPTR,A
+; v2[3]=(uint8) ptr_y->v[1];     /*least significnt byte */
+			; SOURCE LINE # 135
+	INC  	DPTR
+	MOV  	A,R7
+	MOVX 	@DPTR,A
+; 	v2[4]=(uint8)ptr_y->v[0]>>24;
+			; SOURCE LINE # 136
+	LCALL	?C?LLDPTR
+	MOV  	DPTR,#v2?046+04H
+	CLR  	A
+	MOVX 	@DPTR,A
+; v2[5]=(uint8)ptr_y->v[0]>>16 ;
+			; SOURCE LINE # 137
+	INC  	DPTR
+	MOVX 	@DPTR,A
+; v2[6]=(uint8) ptr_y->v[0]>>8;
+			; SOURCE LINE # 138
+	LCALL	?C?LLDPTR
+	MOV  	DPTR,#v2?046+06H
+	CLR  	A
+	MOVX 	@DPTR,A
+; v2[7]=(uint8) ptr_y->v[0];     /*least significnt byte */
+			; SOURCE LINE # 139
+	INC  	DPTR
+	MOV  	A,R7
+	MOVX 	@DPTR,A
+; 	UART_SendString("HELLO EVERy BOdy"); 
+			; SOURCE LINE # 140
+	MOV  	R3,#0FFH
+	MOV  	R2,#HIGH (?SC_16)
+	MOV  	R1,#LOW (?SC_16)
+	LCALL	_UART_SendString
+; 
+; 	#pragma asm
+; //MOd
+	  
+; 	//ADD A,v[0] ;   
+	  
+; //   JMP   $           ; endless loop
+	  
+; //MOV A,x ;
+	  
+; //ADD A,y ;
+	  
+; //MOV z,A ;	
+	  
+; 	#pragma endasm
+; if(z==2)
+			; SOURCE LINE # 150
+	MOV  	DPTR,#z?044
+	MOVX 	A,@DPTR
+	MOV  	R3,#0FFH
+	CJNE 	A,#02H,?C0001
+; {
+			; SOURCE LINE # 151
+; 
+; UART_SendString("HELLO EVERy BOdy"); 
+			; SOURCE LINE # 153
+	MOV  	R2,#HIGH (?SC_16)
+	MOV  	R1,#LOW (?SC_16)
+; }
+			; SOURCE LINE # 154
+	SJMP 	?C0004
+?C0001:
+; else{UART_SendString("EVERy BOdy"); 
+			; SOURCE LINE # 155
+	MOV  	R2,#HIGH (?SC_33)
+	MOV  	R1,#LOW (?SC_33)
+?C0004:
+	LCALL	_UART_SendString
+; }
+			; SOURCE LINE # 156
+; }
+			; SOURCE LINE # 157
+?C0003:
+	RET  	
+; END OF _addFun
+
+	END

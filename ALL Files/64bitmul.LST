@@ -1,0 +1,225 @@
+C51 COMPILER V9.52.0.0   64BITMUL                                                          06/18/2015 02:14:49 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE 64BITMUL
+OBJECT MODULE PLACED IN 64bitmul.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 64bitmul.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          
+   2          /* Copyright (c) Microsoft Corporation. All rights reserved. */
+   3          
+   4          /* Portable 64-bit integer math functions for MMLite
+   5           */
+   6          #define __NO_BUILTIN_INT64 1
+   7          #if defined(MMLITE)
+              #include <mmlite.h>
+              #include <machdep.h>
+              #include "std_types.h"
+              #else
+  12          #define INT64 MYINT64
+  13          #define UINT64 MYUINT64
+  14          #include <windows.h>
+*** WARNING C318 IN LINE 14 OF 64bitmul.c: can't open file 'windows.h'
+  15          #undef INT64
+  16          #undef UINT64
+  17          typedef struct _INT64 INT64;
+  18          typedef struct _UINT64 UINT64;
+  19          #define EXTERN_C extern
+  20          #include "int64.h"
+*** WARNING C318 IN LINE 20 OF 64bitmul.c: can't open file 'int64.h'
+  21          #endif
+  22          
+  23          /* Cannot (and should not) compile this if there is compiler support.
+  24           * Dont think you can have it both ways because of alignment issues.
+  25           * Someday the unions might get smarter.
+  26           */
+  27          /* Well then, we'll give it another shot.  If there is compiler support
+  28           * we'll just make sure the compiler support routines work.  So the code
+  29           * in there is only used by the test programs e.g. tstdiv64.c & friends.
+  30           */
+  31          
+  32          /* Nullify macros for functions we define. If we get compiled then
+  33           * it means that those macros are needed as functions.
+  34           */
+  35          #undef Int64TimesInt64
+  36          #undef Int64TimesInt32
+  37          #undef Uint64TimesUint64
+  38          #undef Uint64TimesUint32
+  39          
+  40          #ifndef Uint32TimesUint32
+  41          #define Uint32TimesUint32(_a_,_b_) ((_a_) * (_b_))
+  42          #endif
+  43          
+  44          
+  45          #if !defined(__TCS__)
+  46          #define MUX(a,b,c)     ((a) ? (b) : (c))
+  47          #define iabs(a) ((INT32)(a) < 0 ? -(INT32)(a) : (a))
+  48          /* umulm returns the high 32 bits of 32x32->64 multiplication */
+  49          unsigned long  umulm(UINT32 a, UINT32 b);
+*** ERROR C141 IN LINE 49 OF 64bitmul.c: syntax error near 'a', expected ')'
+  50          #endif
+  51          
+  52          #if defined(_MSC_VER)
+C51 COMPILER V9.52.0.0   64BITMUL                                                          06/18/2015 02:14:49 PAGE 2   
+
+              #pragma warning(disable:4146)  /* unary minus to unsigned type, result still unsigned */
+              #endif
+  55          
+  56          /* MMLite runtime library function -- Multiply a signed,
+  57           * 64-bit integer by a signed, 64-bit integer.  The
+  58           * return value (the product) is a signed 64-bit integer.
+  59           */
+  60          INT64 Int64TimesInt64(INT64 x, INT64 y)
+  61          {
+*** ERROR C230 IN LINE 61 OF 64bitmul.c: '_INT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 61 OF 64bitmul.c: '_INT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 61 OF 64bitmul.c: '_INT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 61 OF 64bitmul.c: '_INT64': unknown struct/union/enum tag
+  62   1          UINT32 x0, x1, y0, y1, z0, z1;
+*** ERROR C202 IN LINE 62 OF 64bitmul.c: 'UINT32': undefined identifier
+*** ERROR C141 IN LINE 62 OF 64bitmul.c: syntax error near 'x0'
+  63   1          INT64 z;
+*** ERROR C141 IN LINE 63 OF 64bitmul.c: syntax error near 'INT64'
+*** ERROR C202 IN LINE 63 OF 64bitmul.c: 'z': undefined identifier
+  64   1          int sign, xneg, yneg;
+*** ERROR C141 IN LINE 64 OF 64bitmul.c: syntax error near 'int'
+*** ERROR C202 IN LINE 64 OF 64bitmul.c: 'sign': undefined identifier
+  65   1      
+  66   1          /* Remember sign of result.
+  67   1           */
+  68   1          sign = (x.HighPart ^ y.HighPart) >> 31;
+*** ERROR C202 IN LINE 68 OF 64bitmul.c: 'sign': undefined identifier
+  69   1      
+  70   1          /* Take absolute values of multiplicand x and multiplier y.
+  71   1           */
+  72   1          xneg = (x.HighPart < 0);
+*** ERROR C202 IN LINE 72 OF 64bitmul.c: 'xneg': undefined identifier
+  73   1          x1 = MUX(xneg, ~x.HighPart + !x.LowPart, x.HighPart);
+*** ERROR C202 IN LINE 73 OF 64bitmul.c: 'x1': undefined identifier
+  74   1          x0 = MUX(xneg, -x.LowPart, x.LowPart);
+*** ERROR C202 IN LINE 74 OF 64bitmul.c: 'x0': undefined identifier
+  75   1          yneg = (y.HighPart < 0);
+*** ERROR C202 IN LINE 75 OF 64bitmul.c: 'yneg': undefined identifier
+  76   1          y1 = MUX(yneg, ~y.HighPart + !y.LowPart, y.HighPart);
+*** ERROR C202 IN LINE 76 OF 64bitmul.c: 'y1': undefined identifier
+  77   1          y0 = MUX(yneg, -y.LowPart, y.LowPart);
+*** ERROR C202 IN LINE 77 OF 64bitmul.c: 'y0': undefined identifier
+  78   1      
+  79   1          /* Perform the unsigned 32-by-32 multiplications.
+  80   1           */
+  81   1          z0 = Uint32TimesUint32(x0,y0);
+*** ERROR C202 IN LINE 81 OF 64bitmul.c: 'z0': undefined identifier
+  82   1          z1 = Uint32TimesUint32(x0,y1) + Uint32TimesUint32(x1,y0) + umulm(x0, y0);
+*** ERROR C202 IN LINE 82 OF 64bitmul.c: 'z1': undefined identifier
+  83   1      
+  84   1          /* If necessary, negate product.
+  85   1           */
+  86   1          z.HighPart = MUX(sign, ~z1 + !z0, z1);
+  87   1          z.LowPart = MUX(sign, -z0, z0);
+  88   1          return (z);
+*** ERROR C202 IN LINE 88 OF 64bitmul.c: 'z': undefined identifier
+  89   1      }
+  90          
+  91          
+  92          /* MMLite runtime library function -- Multiply a signed,
+  93           * 64-bit integer by a signed, 32-bit integer.  The
+  94           * return value (the product) is a signed 64-bit integer.
+C51 COMPILER V9.52.0.0   64BITMUL                                                          06/18/2015 02:14:49 PAGE 3   
+
+  95           */
+  96          INT64 Int64TimesInt32(INT64 x, INT32 y)
+*** ERROR C141 IN LINE 96 OF 64bitmul.c: syntax error near 'y', expected ')'
+  97          {
+*** ERROR C230 IN LINE 97 OF 64bitmul.c: '_INT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 97 OF 64bitmul.c: '_INT64': unknown struct/union/enum tag
+  98   1          UINT32 x0, x1, z0, z1;
+*** ERROR C202 IN LINE 98 OF 64bitmul.c: 'UINT32': undefined identifier
+*** ERROR C141 IN LINE 98 OF 64bitmul.c: syntax error near 'x0'
+  99   1          INT64 z;
+*** ERROR C141 IN LINE 99 OF 64bitmul.c: syntax error near 'INT64'
+*** ERROR C202 IN LINE 99 OF 64bitmul.c: 'z': undefined identifier
+ 100   1          int sign, xneg;
+*** ERROR C141 IN LINE 100 OF 64bitmul.c: syntax error near 'int'
+*** ERROR C202 IN LINE 100 OF 64bitmul.c: 'sign': undefined identifier
+ 101   1      
+ 102   1          /* Remember sign of result.
+ 103   1           */
+ 104   1          sign = (x.HighPart ^ y) >> 31;
+*** ERROR C202 IN LINE 104 OF 64bitmul.c: 'sign': undefined identifier
+ 105   1      
+ 106   1          /* Take absolute values of multiplicand x and multiplier y.
+ 107   1           */
+ 108   1          xneg = (x.HighPart < 0);
+*** ERROR C202 IN LINE 108 OF 64bitmul.c: 'xneg': undefined identifier
+ 109   1          x1 = MUX(xneg, ~x.HighPart + !x.LowPart, x.HighPart);
+*** ERROR C202 IN LINE 109 OF 64bitmul.c: 'x1': undefined identifier
+ 110   1          x0 = MUX(xneg, -x.LowPart, x.LowPart);
+*** ERROR C202 IN LINE 110 OF 64bitmul.c: 'x0': undefined identifier
+ 111   1          y = iabs(y);
+*** ERROR C202 IN LINE 111 OF 64bitmul.c: 'y': undefined identifier
+ 112   1      
+ 113   1          /* Perform the unsigned 32-by-32 multiplications.
+ 114   1           */
+ 115   1          z0 = Uint32TimesUint32(x0,y);
+*** ERROR C202 IN LINE 115 OF 64bitmul.c: 'z0': undefined identifier
+ 116   1          z1 = Uint32TimesUint32(x1,y) + umulm(x0, y);
+*** ERROR C202 IN LINE 116 OF 64bitmul.c: 'z1': undefined identifier
+ 117   1      
+ 118   1          /* If necessary, negate product.
+ 119   1           */
+ 120   1          z.HighPart = MUX(sign, ~z1 + !z0, z1);
+ 121   1          z.LowPart = MUX(sign, -z0, z0);
+ 122   1          return (z);
+*** ERROR C202 IN LINE 122 OF 64bitmul.c: 'z': undefined identifier
+ 123   1      }
+ 124          
+ 125          /* MMLite runtime library function -- Multiply an unsigned,
+ 126           * 64-bit integer by an unsigned, 64-bit integer.  The
+ 127           * return value (the product) is an unsigned 64-bit integer.
+ 128           */
+ 129          UINT64 Uint64TimesUint64(UINT64 x, UINT64 y)
+ 130          {
+*** ERROR C230 IN LINE 130 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 130 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 130 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 130 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+ 131   1          UINT64 z;
+*** ERROR C230 IN LINE 131 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+ 132   1      
+ 133   1          /* Perform the unsigned 32-by-32 multiplications.
+ 134   1           */
+C51 COMPILER V9.52.0.0   64BITMUL                                                          06/18/2015 02:14:49 PAGE 4   
+
+ 135   1          z.LowPart = Uint32TimesUint32(x.LowPart,y.LowPart);
+ 136   1          z.HighPart = Uint32TimesUint32(x.LowPart,y.HighPart) +
+ 137   1              Uint32TimesUint32(x.HighPart,y.LowPart) + umulm(x.LowPart, y.LowPart);
+ 138   1      
+ 139   1          return (z);
+*** ERROR C202 IN LINE 139 OF 64bitmul.c: 'z': undefined identifier
+ 140   1      }
+ 141          
+ 142          
+ 143          /* MMLite runtime library function -- Multiply an unsigned,
+ 144           * 64-bit integer by an unsigned, 32-bit integer.  The
+ 145           * return value (the product) is an unsigned 64-bit integer.
+ 146           */
+ 147          UINT64 Uint64TimesUint32(UINT64 x, UINT32 y)
+*** ERROR C141 IN LINE 147 OF 64bitmul.c: syntax error near 'y', expected ')'
+ 148          {
+*** ERROR C230 IN LINE 148 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+*** ERROR C230 IN LINE 148 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+ 149   1          UINT64 z;
+*** ERROR C230 IN LINE 149 OF 64bitmul.c: '_UINT64': unknown struct/union/enum tag
+ 150   1      
+ 151   1          /* Perform the unsigned 32-by-32 multiplications.
+ 152   1           */
+ 153   1          z.LowPart = Uint32TimesUint32(x.LowPart,y);
+ 154   1          z.HighPart = Uint32TimesUint32(x.HighPart,y) + umulm(x.LowPart, y);
+ 155   1      
+ 156   1          return (z);
+*** ERROR C202 IN LINE 156 OF 64bitmul.c: 'z': undefined identifier
+ 157   1      }
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  49 ERROR(S)

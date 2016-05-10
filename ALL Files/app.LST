@@ -1,0 +1,104 @@
+C51 COMPILER V9.52.0.0   APP                                                               06/23/2015 02:10:08 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE APP
+OBJECT MODULE PLACED IN app.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE app.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*! 
+   2          
+   3           * @file    app.c
+   4           * @brief   Application file 
+   5           * @author  Ahmed Nasr Eldin 
+   6           * @date    20/6/2015
+   7           * @version 1.0
+   8          */
+   9          /*********************************************************************************************************
+             -*********************
+  10                                             included files
+  11          **********************************************************************************************************
+             -********************/
+  12          #include "uart.h"
+  13          #include "calc.h"
+  14          #include "dataparse.h"
+  15          
+  16          void main()
+  17          {
+  18   1        /****************** Definitions of Variables**************/
+  19   1        uint8 str [9] ;      /*String used to print output on screen */
+  20   1        uint32 Data;         
+  21   1        big64_t x ;         /*first Operand */ 
+  22   1        uint8 flag ;        /*flag to check data parsing */
+  23   1        sint8 i = 0;        /*used for itiraton */
+  24   1        big64_t y ;         /*Second operand */
+  25   1        big128_t z ;        /*Output variable used to store data after the operation */
+  26   1        uint8 op ;          /*Char to contain the operation */
+  27   1        
+  28   1        /*************** Initialization of operands and uart ******************/
+  29   1        
+  30   1        x.v[0]=0;           
+  31   1        x.v[1]=0;
+  32   1        y.v[0]=0;
+  33   1        y.v[1]=0; 
+  34   1        UART_Init() ;
+  35   1        /****************** the Application ************************************/
+  36   1      
+  37   1      for(;;) {
+  38   2        UART_SendString("64 Unsigned Number Calculator") ;
+  39   2        UART_Tx(ENTER) ;                                                  /*Enter to new line */
+  40   2        UART_SendString("Type the expression then press enter:")  ;
+  41   2        UART_Tx(ENTER) ;
+  42   2        op=DATA_parse(&x,&y,&flag) ;              /*Parse data and return the operation */
+  43   2      
+  44   2        switch((flag))                         /*check the data enterd was correct or not */
+  45   2        {
+  46   3          case 1 :                            /*Data check passed */
+  47   3         if(op=='+')
+  48   3         {
+  49   4       z=addFun(&x,&y) ;                     /*add the two 64 bit numbers */
+  50   4        UART_SendString("Result");
+  51   4        UART_Tx(ENTER) ;
+  52   4      UART_SendString("0x");
+  53   4       /****************** Display the Result ********************/
+C51 COMPILER V9.52.0.0   APP                                                               06/23/2015 02:10:08 PAGE 2   
+
+  54   4           for(i=0;i<4;i++)
+  55   4          {
+  56   5          Data=z.v[i] ;
+  57   5          sprintf(str,"%lx",Data);       /*Convert the hex data to string */
+  58   5          UART_SendString(str);
+  59   5          }
+  60   4         }
+  61   3          break;
+  62   3        /****************** Commented code becasuse of code size and Evaluation version ****************/
+  63   3         /*   case 3 :
+  64   3            UART_SendString("Not Supported operation");
+  65   3            break ;
+  66   3            case 2:
+  67   3            case 4 :
+  68   3           UART_SendString("Plz Enter Data in hex format");*/
+  69   3          default:                         /*if flag !=1   print errot on terminal */ 
+  70   3        UART_SendString("ERROR");
+  71   3          break;
+  72   3      
+  73   3        }
+  74   2        while((UART_Rx()!=ENTER));                /*Wait till user press enter */ 
+  75   2        UART_Tx(CLS);                              /*Clear Terminal */
+  76   2        }
+  77   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    328    ----
+   CONSTANT SIZE    =     88    ----
+   XDATA SIZE       =   ----      47
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,179 @@
+C51 COMPILER V9.52.0.0   DATAPARSE                                                         06/23/2015 02:10:09 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE DATAPARSE
+OBJECT MODULE PLACED IN dataparse.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE dataparse.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*! 
+   2          
+   3           * @file    dataparse.c
+   4           * @brief   dataparse file which responsible for parsing and checking data from user
+   5           * @author  Ahmed Nasr Eldin 
+   6           * @date    19/6/2015
+   7           * @version 1.0
+   8          */
+   9          
+  10          /*********************************************************************************************************
+             -*********************
+  11                                             included files
+  12          **********************************************************************************************************
+             -********************/
+  13          
+  14          #include "dataparse.h"
+  15          
+  16          
+  17          unsigned char DATA_parse(big64_t * X_ptr , big64_t * Y_ptr ,uint8 * flag )
+  18          {
+  19   1      unsigned char Operation = 0 ;     /*User entered Operation */ 
+  20   1      uint8 UserInputData [38] ;        /*String to get data from user */
+  21   1        uint8 * num11 ;                 /*pointer to character represent the Low part from first operand */
+  22   1        uint8 * num12 ;                 /*pointer to character represent the High part from first operand */
+  23   1        uint8 * num21 ;                 /*pointer to character represent the Low part from Second operand */
+  24   1        uint8 * num22 ;                 /*pointer to character represent the High part from second operand */
+  25   1      uint8 i=0,j = 0 ;                 /*used for itirations */
+  26   1        uint8 length1 = 0 ;             /*length of first operand */
+  27   1        uint8 length2= 0 ;              /*length of second operand */
+  28   1        uint8 x;
+  29   1        uint8 index ;                   /*Index of operation location */
+  30   1        *flag=0;
+  31   1      UART_RecieveString(UserInputData) ;    /*Recieve data from user */
+  32   1      
+  33   1        
+  34   1        
+  35   1                 /********* Check for first 0x from user input data *******************************/
+  36   1      if (!(UserInputData[0]=='0' && ((UserInputData[1]=='x')||UserInputData[1]=='X')))
+  37   1      {
+  38   2      *flag=2 ;  /*ERROR in Hexa input DATA */  
+  39   2      
+  40   2      }
+  41   1            /*****************Searching For OPeration in the String *******************************/
+  42   1      
+  43   1       while(!((UserInputData[i]=='\0')||(flag==1)))
+  44   1        {
+  45   2        if(!(UserInputData[i]=='*'||UserInputData[i]=='+')) 
+  46   2        {
+  47   3        *flag=3;       /*Not Supported Operaion **/
+  48   3      
+  49   3        }
+  50   2        else 
+  51   2        {
+  52   3        Operation=UserInputData[i];
+  53   3        *flag=1 ;                                  /*operation Found */
+C51 COMPILER V9.52.0.0   DATAPARSE                                                         06/23/2015 02:10:09 PAGE 2   
+
+  54   3        length1=i-2 ;                              /*Set the length for first operand */
+  55   3        length2=(strlen(UserInputData)-2)-(i+3) ;  /*Set the lengh for second operand */
+  56   3        index= i ;
+  57   3      
+  58   3        break; 
+  59   3      }
+  60   2      i++ ;
+  61   2      
+  62   2      }
+  63   1        /********************     Check The Another Hexa Number   *******************/
+  64   1      
+  65   1       /****************** Check for 0x in the second number  ***********************/
+  66   1      if (!(UserInputData[index+1]=='0' && ((UserInputData[index+2]=='x')||UserInputData[index+2]=='X')))
+  67   1      {
+  68   2      *flag=2 ;                      /*ERROR in Hexa input DATA */  
+  69   2      
+  70   2      }
+  71   1      
+  72   1      /***********************   Check for all data in HEXA FORMAT *****************/
+  73   1      if((*flag)==1 )         /*check if there is no error */
+  74   1      {
+  75   2        
+  76   2        /*Check for data entered in Hexa */
+  77   2      for(j=2;j<(index)&&(*flag!=4);j++)
+  78   2        {
+  79   3      /************** Check that all elements in hex format from 0--> F or 0---> f  *************/
+  80   3          x=UserInputData[j];
+  81   3      if(!(((57>=x)&&(x>=48))||((70>=x)&&(x>=65))||((102>=x)&&(x>=97))))
+  82   3        {
+  83   4        *flag=4 ;
+  84   4        }
+  85   3        
+  86   3        }
+  87   2      for(j=index+3;j<=(strlen(UserInputData)-2)&&(*flag!=4);j++)
+  88   2        {
+  89   3      /************** Check that all elements in hex format from 0--> F or 0---> f  *************/
+  90   3      
+  91   3          x=UserInputData[j];
+  92   3          
+  93   3          if(!(((57>=x)&&(x>=48))||((70>=x)&&(x>=65))||((102>=x)&&(x>=97))))
+  94   3        {
+  95   4        
+  96   4          *flag=4 ;   /*Generate Error Data */
+  97   4        }
+  98   3      
+  99   3      }
+ 100   2      }
+ 101   1      
+ 102   1      
+ 103   1      /***************************** After Checking Parsing the Data *********************************/
+ 104   1      if(*flag==1)
+ 105   1      {
+ 106   2       num11=UserInputData+2 ;                  /*num11 = the address of the first number in the first operand *
+             -/
+ 107   2      
+ 108   2        if(length1<=8)                          /*if length<8 all data parsed in low 32 bit */
+ 109   2        { 
+ 110   3        *(num11+(length1+1))=NULL ;               /*Put Null after first operand */
+*** WARNING C260 IN LINE 110 OF dataparse.c: '=': pointer truncation
+ 111   3        X_ptr->v[1]  = strtoul (num11, NULL, 16);   /*Big Endian  Low 32 bit in the higher address  */
+ 112   3        }
+ 113   2        else                                          
+C51 COMPILER V9.52.0.0   DATAPARSE                                                         06/23/2015 02:10:09 PAGE 3   
+
+ 114   2        {
+ 115   3        *(num11+(length1+1))=NULL ;                 /*Put Null after first operand */
+*** WARNING C260 IN LINE 115 OF dataparse.c: '=': pointer truncation
+ 116   3        num12 = ((num11+(length1))-8) ;             /*num12 = the address of the Low 32 bit in the first operand 
+             -*/
+ 117   3        X_ptr->v[1]  = strtoul (num12, NULL, 16);   /*Big Endian  Low 32 bit in the higher address  */
+ 118   3        *num12=NULL ;                               /*  (*num12) = NULL after Conversion to convert the High 32 b
+             -it */
+*** WARNING C260 IN LINE 118 OF dataparse.c: '=': pointer truncation
+ 119   3        X_ptr->v[0] = strtoul (num11, NULL, 16);    /*Big Endian  high 32 bit in the lower address  */
+ 120   3        }
+ 121   2      
+ 122   2      num21=UserInputData+(index+3) ;                /*num21 = the address of the first number in the second operand */
+ 123   2      *(num21+(length2+1))=NULL ;                   /*Put Null after second operand */  
+*** WARNING C260 IN LINE 123 OF dataparse.c: '=': pointer truncation
+ 124   2        if(length2<=8)                                /*if length<8 all data parsed in low 32 bit */
+ 125   2        {
+ 126   3        
+ 127   3        Y_ptr->v[1]  = strtoul (num21, NULL, 16);   /*Big Endian  Low 32 bit in the higher address  */
+ 128   3        }
+ 129   2        else
+ 130   2        {
+ 131   3        num22=((num21+(length2))-8);                /*num12 = the address of the Low 32 bit in the second operand */
+ 132   3        Y_ptr->v[1]  = strtoul (num22, NULL, 16);   /*Big Endian  Low 32 bit in the higher address  */
+ 133   3        *(num22+1)=NULL ;                           /*  (*num22) = NULL after Conversion to convert the High 32 b
+             -it */
+*** WARNING C260 IN LINE 133 OF dataparse.c: '=': pointer truncation
+ 134   3        Y_ptr->v[0] = strtoul (num21, NULL, 16);    /*Big Endian  high 32 bit in the lower address  */
+ 135   3        }
+ 136   2      
+ 137   2        
+ 138   2      }
+ 139   1      
+ 140   1      return Operation ;
+ 141   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1020    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      66
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  5 WARNING(S),  0 ERROR(S)

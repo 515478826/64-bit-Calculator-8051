@@ -1,0 +1,7 @@
+"STARTUP.obj",
+"uart.obj",
+"app.obj",
+"calc.obj",
+"dataparse.obj" 
+TO "64bitAdderMul" 
+RAMSIZE(256) 

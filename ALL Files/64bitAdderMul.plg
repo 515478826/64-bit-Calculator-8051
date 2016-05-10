@@ -1,0 +1,236 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+E:\my work\Technical Task\64bitAdderMul.uvproj
+Project File Date:  06/17/2015
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(13): warning C280: 'arr1': unreferenced local variable
+app.c(15): warning C280: 'z': unreferenced local variable
+app.c(16): warning C280: 'arr': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_UART_RECIEVESTRING?UART
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DATA_PARSE
+    MODULE:  app.obj (APP)
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?_DATA_PARSE?BYTE
+    MODULE:  app.obj (APP)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?_DATA_PARSE?BYTE
+    MODULE:  app.obj (APP)
+    ADDRESS: 087FH
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DATA_PARSE
+    MODULE:  app.obj (APP)
+    ADDRESS: 089FH
+Program Size: data=9.0 xdata=50 code=616
+creating hex file from "64bitAdderMul"...
+"64bitAdderMul" - 0 Error(s), 8 Warning(s).
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(13): warning C280: 'arr1': unreferenced local variable
+app.c(15): warning C280: 'z': unreferenced local variable
+app.c(16): warning C280: 'arr': unreferenced local variable
+compiling dataparse.c...
+dataparse.c(65): warning C260: '=': pointer truncation
+dataparse.c(67): warning C260: '=': pointer truncation
+dataparse.c(2): warning C280: 'X_ptr': unreferenced local variable
+dataparse.c(2): warning C280: 'Y_ptr': unreferenced local variable
+compiling calc.c...
+calc.c(37): warning C280: 'ptr2': unreferenced local variable
+linking...
+BL51 BANKED LINKER/LOCATER V6.22 - SN: Eval Version
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2009
+"STARTUP.obj",
+"uart.obj",
+"app.obj",
+"dataparse.obj",
+"calc.obj" 
+TO "64bitAdderMul" 
+RAMSIZE(256) 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 086AH BYTE (105%) *
+******************************************************************************
+Program Size: data=9.0 xdata=239 code=2497
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL\C51\LIB\C51L.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(13): warning C280: 'arr1': unreferenced local variable
+app.c(15): warning C280: 'z': unreferenced local variable
+app.c(16): warning C280: 'arr': unreferenced local variable
+compiling dataparse.c...
+dataparse.c(65): warning C260: '=': pointer truncation
+dataparse.c(67): warning C260: '=': pointer truncation
+dataparse.c(2): warning C280: 'X_ptr': unreferenced local variable
+dataparse.c(2): warning C280: 'Y_ptr': unreferenced local variable
+compiling calc.c...
+calc.c(37): warning C280: 'ptr2': unreferenced local variable
+linking...
+BL51 BANKED LINKER/LOCATER V6.22 - SN: Eval Version
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2009
+"STARTUP.obj",
+"uart.obj",
+"app.obj",
+"dataparse.obj",
+"calc.obj" 
+TO "64bitAdderMul" 
+RAMSIZE(256) 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 086AH BYTE (105%) *
+******************************************************************************
+Program Size: data=9.0 xdata=239 code=2497
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL\C51\LIB\C51L.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created
+Clean started: Project: '64bitAdderMul'
+   deleting intermediate output files for target 'Target 1'
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(13): warning C280: 'arr1': unreferenced local variable
+app.c(15): warning C280: 'z': unreferenced local variable
+app.c(16): warning C280: 'arr': unreferenced local variable
+compiling dataparse.c...
+dataparse.c(65): warning C260: '=': pointer truncation
+dataparse.c(67): warning C260: '=': pointer truncation
+dataparse.c(2): warning C280: 'X_ptr': unreferenced local variable
+dataparse.c(2): warning C280: 'Y_ptr': unreferenced local variable
+compiling calc.c...
+calc.c(37): warning C280: 'ptr2': unreferenced local variable
+linking...
+BL51 BANKED LINKER/LOCATER V6.22 - SN: Eval Version
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2009
+"STARTUP.obj",
+"uart.obj",
+"app.obj",
+"dataparse.obj",
+"calc.obj" 
+TO "64bitAdderMul" 
+RAMSIZE(256) 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 086AH BYTE (105%) *
+******************************************************************************
+Program Size: data=9.0 xdata=239 code=2497
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL\C51\LIB\C51L.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(13): warning C280: 'arr1': unreferenced local variable
+app.c(15): warning C280: 'z': unreferenced local variable
+app.c(16): warning C280: 'arr': unreferenced local variable
+compiling dataparse.c...
+dataparse.c(64): warning C260: '=': pointer truncation
+dataparse.c(66): warning C260: '=': pointer truncation
+dataparse.c(2): warning C280: 'X_ptr': unreferenced local variable
+dataparse.c(2): warning C280: 'Y_ptr': unreferenced local variable
+compiling calc.c...
+calc.c(37): warning C280: 'ptr2': unreferenced local variable
+linking...
+BL51 BANKED LINKER/LOCATER V6.22 - SN: Eval Version
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2009
+"STARTUP.obj",
+"uart.obj",
+"app.obj",
+"dataparse.obj",
+"calc.obj" 
+TO "64bitAdderMul" 
+RAMSIZE(256) 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0852H BYTE (104%) *
+******************************************************************************
+Program Size: data=9.0 xdata=239 code=2473
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL\C51\LIB\C51L.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(25): error C141: syntax error near '/'
+compiling dataparse.c...
+dataparse.c(64): warning C260: '=': pointer truncation
+dataparse.c(66): warning C260: '=': pointer truncation
+dataparse.c(2): warning C280: 'X_ptr': unreferenced local variable
+dataparse.c(2): warning C280: 'Y_ptr': unreferenced local variable
+compiling calc.c...
+calc.c(37): warning C280: 'ptr2': unreferenced local variable
+Target not created
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling uart.c...
+compiling app.c...
+app.c(13): warning C280: 'arr1': unreferenced local variable
+app.c(15): warning C280: 'z': unreferenced local variable
+app.c(16): warning C280: 'arr': unreferenced local variable
+compiling dataparse.c...
+dataparse.c(64): warning C260: '=': pointer truncation
+dataparse.c(66): warning C260: '=': pointer truncation
+dataparse.c(2): warning C280: 'X_ptr': unreferenced local variable
+dataparse.c(2): warning C280: 'Y_ptr': unreferenced local variable
+compiling calc.c...
+calc.c(37): warning C280: 'ptr2': unreferenced local variable
+linking...
+BL51 BANKED LINKER/LOCATER V6.22 - SN: Eval Version
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2009
+"STARTUP.obj",
+"uart.obj",
+"app.obj",
+"dataparse.obj",
+"calc.obj" 
+TO "64bitAdderMul" 
+RAMSIZE(256) 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 082AH BYTE (102%) *
+******************************************************************************
+Program Size: data=9.0 xdata=239 code=2433
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MULT1?CALC
+*** FATAL ERROR L250: CODE SIZE LIMIT IN RESTRICTED VERSION EXCEEDED
+    MODULE:  C:\KEIL\C51\LIB\C51L.LIB (-----)
+    LIMIT:   0800H BYTES
+Target not created

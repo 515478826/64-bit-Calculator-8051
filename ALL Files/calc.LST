@@ -1,0 +1,179 @@
+C51 COMPILER V9.52.0.0   CALC                                                              06/23/2015 02:10:08 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE CALC
+OBJECT MODULE PLACED IN calc.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE calc.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*! 
+   2          
+   3           * @file    calc.c
+   4           * @brief   calculation file which responsible for performing arithmetic operation for 64 bit data
+   5           * @author  Ahmed Nasr Eldin 
+   6           * @date    20/6/2015
+   7           * @version 1.0
+   8          */
+   9          
+  10          #include "calc.h"
+  11          big128_t addFun(big64_t * ptr_x , big64_t * ptr_y )
+  12          {
+  13   1      
+  14   1        uint32 Low_Part ;
+  15   1        uint32 High_Part ;
+  16   1        uint8 Carry=0,Carry2=0 ;
+  17   1        big128_t op  ;
+  18   1        uint8 i ;
+  19   1        /*initialize 128 data by zero  */
+  20   1        for(i=0;i<4;i++)  
+  21   1        {
+  22   2        op.v[i]=0;
+  23   2        }
+  24   1       Low_Part=ptr_x->v[1] + ptr_y->v[1] ;
+  25   1      
+  26   1        if(Low_Part<(MAX(ptr_x->v[1],ptr_y->v[1])))  /*Check For Overflow */ 
+  27   1      
+  28   1        {
+  29   2          Carry = 1 ;
+  30   2          Low_Part = (MAX_VAL_32-1) ;
+  31   2        }
+  32   1        High_Part=(ptr_x->v[0] + ptr_y->v[0]+Carry ) ;
+  33   1      
+  34   1        if(High_Part<(MAX(ptr_x->v[0],ptr_y->v[0])))  /*Check For Overflow */ 
+  35   1        {
+  36   2      
+  37   2        Carry2 = 1 ;
+  38   2        High_Part = (MAX_VAL_32-1)+Carry ;
+  39   2        }
+  40   1        op.v[3]=Low_Part  ;          /*Assign data for op */
+  41   1        op.v[2]=High_Part ;         /*Assign data for op */
+  42   1        op.v[1]=Carry2;             /*Assign data for op */
+  43   1      return op ;
+  44   1      }
+  45          
+  46          
+  47          
+  48          
+  49          
+  50          /*****NOT Compiled code because Evaluation version and Exceed the limited code size  ***********/ 
+  51          
+  52          #ifdef  MULTIPLY 
+              
+              big128_t MULT1(big64_t x , big64_t y)
+              {
+C51 COMPILER V9.52.0.0   CALC                                                              06/23/2015 02:10:08 PAGE 2   
+
+                uint8 i ,j ;
+                big128_t p1 ;
+                uint32 arr[16];
+                uint32 arr2[6] ;
+                uint16 * op,ptr2 ;
+                uint16 * ptr  ;
+                uint16 * ptr1 ;
+                ptr = (uint16 *)&(x.v) ;
+                ptr1 =(uint16 *)& (y.v) ;
+                op = (uint16 *)&(p1.v) ;
+              
+                for(j=0;j<4;j++)
+                {
+                for(i=0;i<4;i++)
+                {
+                arr[i+(j*4)]=ptr[j] * ptr1[i] ;
+                }
+                } 
+                  
+                op[0]=(uint16) arr[0] ;
+                /****************************************/
+                arr2[0]=(arr[1]+arr[4]+(arr[0]>>16));
+                op[1]=(uint16)arr2[0] ;
+                /****************************************/
+                arr2[1]=(arr[2]+arr[5]+arr[8]+(arr2[0]>>16)) ;
+                op[2]=(uint16)arr2[1] ;
+                /*****************************************/
+                arr2[2]=(arr[3]+arr[6]+arr[9]+arr[12]+(arr2[1]>>16)) ;
+                op[3]=(uint16)arr2[2] ;
+                /********************************/
+                arr2[3]=(arr[7]+arr[10]+arr[13]+(arr2[2]>>16)) ;
+                op[4]=(uint16)arr2[3] ;
+                arr2[4]=(arr[11]+arr[14]+(arr2[3]>>16)) ;
+                op[5]=(uint16)arr2[4] ;
+                arr2[5]=(arr[15]+(arr2[4]>>16)) ;
+                op[6]=(uint16)arr2[5] ;
+                op[7]=(uint16)(arr2[5]>>16) ;  /*last carry */
+                return p1;
+                }
+              #endif
+  96          
+  97          
+  98          
+  99          
+ 100          
+ 101          
+ 102          
+ 103          
+ 104          
+ 105          
+ 106          
+ 107          
+ 108          
+ 109          
+ 110          /* Not Compiled function because of problems with inline assembly */
+ 111          
+ 112          #ifdef ADDASSEMBLY
+              big128_t addFun(big64_t * ptr_x , big64_t * ptr_y )
+              {
+                uint8 x=1 ; 
+                uint8 y =1;
+                uint8 z =2;
+C51 COMPILER V9.52.0.0   CALC                                                              06/23/2015 02:10:08 PAGE 3   
+
+                uint8 v1[8];
+                uint8 v2[8] ;
+                big128_t Data;
+                uint8 * ptr ;
+                ptr=(uint8 * ) & Data ;
+                UART_SendString("Calc Iam called") ;
+              v1[0]=(uint8)ptr_x->v[1]>>24;
+              v1[1]=(uint8)ptr_x->v[1]>>16 ;
+              v1[2]=(uint8) ptr_x->v[1]>>8;
+              v1[3]=(uint8)ptr_x->v[1];     /*least significnt byte */
+                v1[4]=(uint8)ptr_x->v[0]>>24;
+              v1[5]=(uint8)ptr_x->v[0]>>16 ;
+              v1[6]=(uint8) ptr_x->v[0]>>8;
+              v1[7]=(uint8) ptr_x->v[0];     /*least significnt byte */
+                /**************** Second Variable ********/
+                v2[0]=(uint8)ptr_y->v[1]>>24;
+              v2[1]=(uint8)ptr_y->v[1]>>16 ;
+              v2[2]=(uint8) ptr_y->v[1]>>8;
+              v2[3]=(uint8) ptr_y->v[1];     /*least significnt byte */
+                v2[4]=(uint8)ptr_y->v[0]>>24;
+              v2[5]=(uint8)ptr_y->v[0]>>16 ;
+              v2[6]=(uint8) ptr_y->v[0]>>8;
+              v2[7]=(uint8) ptr_y->v[0];     /*least significnt byte */
+              #pragma asm
+              ADD A,v[0] ;   
+              MOV A,x ;
+              ADD A,y ;
+              MOV z,A ; 
+                #pragma endasm
+              
+              }
+              }
+              #else
+ 151          
+ 152          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    430    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      32
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
